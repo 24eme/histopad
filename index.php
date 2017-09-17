@@ -61,7 +61,7 @@ krsort($pads);
     <body>
         <div class="container" style="margin-top: 20px;">
             <h2>Historique des pads</h2>
-            <table style="margin-top: 20px;" class="table table-bordered table-striped">
+            <table style="margin-top: 20px;" class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
                         <th>Date de modification</th>
