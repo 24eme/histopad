@@ -39,7 +39,7 @@ foreach($files as $file) {
     $parameters = $document->getYAML();
     $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
     $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
-    $pad->date = new \DateTime(exec('git log -n 1 --pretty="%aI" '.$file));
+    $pad->date = new \DateTime(exec('git log -n 1 --pretty="%ai" '.$file));
 
 
     $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
