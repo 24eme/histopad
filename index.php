@@ -106,7 +106,7 @@ if(isset($_GET['pad'])) {
             <?php endif; ?>
 
             $('.openModalViewer').on('click', function(e) {
-                history.pushState(null, null, "?pad="+$(this).attr('data-identifiant'));
+                history.pushState(null, null, window.location.pathname+"?pad="+$(this).attr('data-identifiant'));
                 $('#modalViewer .ajaxContenu').load($(this).attr('href'), function() {
                     $('#modalViewer').modal();
                 });
@@ -114,7 +114,7 @@ if(isset($_GET['pad'])) {
             });
 
             $('#modalViewer').on('hide.bs.modal', function (e) {
-                history.pushState(null, null, "/");
+                history.pushState(null, null, window.location.pathname);
             })
         });
     </script>
