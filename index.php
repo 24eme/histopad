@@ -62,7 +62,7 @@ if(isset($_GET['pad'])) {
                 <?php foreach($pads as $pad): ?>
                     <tr>
                         <td><?php echo $pad->date->format('d/m/Y'); ?></td>
-                        <td><?php echo $pad->title; ?></td>
+                        <td><?php echo substr($pad->title, 0, 58); ?><?php if(strlen($pad->title) > 58): ?>...<?php endif; ?></td>
                         <td><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">HTML</a></td>
                         <td><a href="<?php echo $pad->uri_markdown; ?>">Markdown</a></td>
                         <td><a href="<?php echo $pad->uri_txt; ?>">Text</a></td>
