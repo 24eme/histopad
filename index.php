@@ -19,8 +19,14 @@ foreach($files as $file) {
     $pad->uri_markdown = $file;
     $pad->uri_txt = str_replace(".md", ".txt", $file);
     $pad->uri = str_replace(".md", "", $file);
-    $document = $parser->parse(file_get_contents($pad->path));
-    $parameters = $document->getYAML();
+
+    try {
+    	$document = $parser->parse(file_get_contents($pad->path));
+	$parameters = $document->getYAML();
+    } catch(Exception $e) {
+	$parameters = array("title" => "", "url" => "");
+    }
+
     $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
     $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
     $pad->date = new \DateTime(exec('git log -n 1 --pretty="%ai" '.$file));
