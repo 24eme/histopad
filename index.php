@@ -55,7 +55,7 @@ if(isset($_GET['pad'])) {
 </head>
 <body>
     <div class="container" style="margin-top: 20px;">
-        <h2>Historique des pads <small style="font-size:14px;" class="text-muted">Dépôt GIT : <a href="git@vins.actualys.com:pads.git">git@vins.actualys.com:pads.git</a></small></h2>
+        <h2>Historique des pads <small style="font-size:14px;" class="text-muted">Dépôt GIT : <a href="ssh://git@tinc.24eme.fr:pads.git">git@tinc.24eme.fr:pads.git</a></small></h2>
         <table style="margin-top: 20px;" class="table table-bordered table-striped table-sm">
             <thead>
                 <tr>
