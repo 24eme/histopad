@@ -9,6 +9,26 @@ $parser = new Mni\FrontYAML\Parser();
 
 $pads = array();
 
+$gitDates = explode("\n", shell_exec('git log --pretty="%ai" --name-only *.md'));
+$fileDates = array();
+$date = null;
+foreach($gitDates as $ligne) {
+    if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
+        $date = new \DateTime($ligne);
+        continue;
+    }
+
+    if(!preg_match('/\.md/', $ligne)) {
+        continue;
+    }
+
+    if(isset($fileDates[$ligne])) {
+        continue;
+    }
+
+    $fileDates[$ligne] = $date;
+}
+
 foreach($files as $file) {
     if(!preg_match('/\.md$/', $file)) {
         continue;
@@ -21,7 +41,7 @@ foreach($files as $file) {
     $pad->uri = str_replace(".md", "", $file);
 
     try {
-    	$document = $parser->parse(file_get_contents($pad->path));
+    	$document = $parser->parse(file_get_contents($pad->path), false);
 	$parameters = $document->getYAML();
     } catch(Exception $e) {
 	$parameters = array("title" => "", "url" => "");
@@ -29,7 +49,7 @@ foreach($files as $file) {
 
     $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
     $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
-    $pad->date = new \DateTime(exec('git log -n 1 --pretty="%ai" '.$file));
+    $pad->date = $fileDates[$file];
 
 
     $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
