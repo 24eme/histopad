@@ -3,13 +3,24 @@ $directory = dirname(__FILE__);
 
 require $directory."/autoload.php";
 
-$files = scandir($directory);
-
 $parser = new Mni\FrontYAML\Parser();
 
 $pads = array();
 
-$gitDates = explode("\n", shell_exec('git log --pretty="%ai" --name-only *.md'));
+$limit = 20;
+$execGitLimit = '';
+
+if(isset($_GET['limit']) && $_GET['limit'] == -1) {
+     $limit = false;
+} elseif(isset($_GET['limit']) && preg_match('/^[0-9]+$/', $_GET['limit'])) {
+     $limit = $_GET['limit'];
+}
+
+if($limit) {
+     $execGitLimit = '-n '.$limit;
+}
+
+$gitDates = explode("\n", shell_exec('git log '.$execGitLimit.' --pretty="%ai" --name-only *.md'));
 $fileDates = array();
 $date = null;
 foreach($gitDates as $ligne) {
@@ -29,7 +40,9 @@ foreach($gitDates as $ligne) {
     $fileDates[$ligne] = $date;
 }
 
-foreach($files as $file) {
+$i = 0;
+
+foreach($fileDates as $file => $date) {
     if(!preg_match('/\.md$/', $file)) {
         continue;
     }
@@ -49,10 +62,14 @@ foreach($files as $file) {
 
     $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
     $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
-    $pad->date = $fileDates[$file];
+    $pad->date = $date;
 
 
     $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
+    $i++;
+    if($limit !== false && $i > $limit) {
+	break;
+    }
 }
 
 krsort($pads);
@@ -95,7 +112,10 @@ if(isset($_GET['pad'])) {
                         <td><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
                     </tr>
                 <?php endforeach; ?>
-            </tbody>
+		<?php if($limit !== false): ?>
+		<tr><td colspan="6"><center><a href="?limit=-1">Tous les résultats</a></center></td></tr>
+		<?php endif; ?>
+	     </tbody>
         </table>
     </div>
 
