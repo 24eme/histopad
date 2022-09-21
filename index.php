@@ -7,7 +7,7 @@ $parser = new Mni\FrontYAML\Parser();
 
 $pads = array();
 
-$limit = 20;
+$limit = 50;
 $execGitLimit = '';
 
 if(isset($_GET['limit']) && $_GET['limit'] == -1) {
@@ -113,7 +113,7 @@ if(isset($_GET['pad'])) {
                     </tr>
                 <?php endforeach; ?>
 		<?php if($limit !== false): ?>
-		<tr><td colspan="6"><center><a href="?limit=-1">Tous les résultats</a></center></td></tr>
+			<tr><td colspan="6"><center><a href="?limit=<?php echo $limit + 50 ?>">Voir plus de résultats</a></center></td></tr>
 		<?php endif; ?>
 	     </tbody>
         </table>
