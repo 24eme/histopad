@@ -91,7 +91,7 @@ if(isset($_GET['pad'])) {
                     <button class="btn btn-outline-secondary" type="button">Rechercher</button>
                 </div>
                 <?php if($q): ?>
-                <a href="/" class="small float-right position-absolute"style="z-index: 3; right: 120px; top: 8px;">Annuler la recherche</a>
+                <a href="?q=" class="small float-right position-absolute"style="z-index: 3; right: 120px; top: 8px;">Annuler la recherche</a>
                 <?php endif; ?>
             </div>
         </form>
