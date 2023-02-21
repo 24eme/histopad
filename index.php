@@ -15,6 +15,8 @@ if(isset($_GET['limit']) && $_GET['limit'] == -1) {
      $limit = $_GET['limit'];
 }
 
+$q = (isset($_GET['q']) && trim($_GET['q'])) ? $_GET['q'] : null;
+
 $gitDates = explode("\n", shell_exec('git log --pretty="%ai" --name-only'));
 $fileDates = array();
 $date = null;
@@ -62,6 +64,9 @@ foreach($fileDates as $file => $date) {
     $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
     $pad->date = $date;
 
+    if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
+        continue;
+    }
 
     $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
     $i++;
@@ -86,12 +91,21 @@ if(isset($_GET['pad'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container" style="margin-top: 20px;">
+    <div class="container pt-3">
         <h2>Historique des pads <small style="font-size:14px;" class="text-muted">Dépôt GIT : <a href="ssh://git@tinc.24eme.fr:pads.git">git@tinc.24eme.fr:pads.git</a></small></h2>
-        <table style="margin-top: 20px;" class="table table-bordered table-striped table-sm">
+
+        <form method="GET" class="mt-3">
+            <div class="input-group">
+                <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button">Rechercher</button>
+                </div>
+            </div>
+        </form>
+        <table class="table table-bordered table-striped table-sm mt-3">
             <thead>
                 <tr>
                     <th>Date de modif.</th>
