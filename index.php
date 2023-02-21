@@ -7,8 +7,7 @@ $parser = new Mni\FrontYAML\Parser();
 
 $pads = array();
 
-$limit = 50;
-$execGitLimit = '';
+$limit = 100;
 
 if(isset($_GET['limit']) && $_GET['limit'] == -1) {
      $limit = false;
@@ -16,13 +15,10 @@ if(isset($_GET['limit']) && $_GET['limit'] == -1) {
      $limit = $_GET['limit'];
 }
 
-if($limit) {
-     $execGitLimit = '-n '.$limit;
-}
-
-$gitDates = explode("\n", shell_exec('git log '.$execGitLimit.' --pretty="%ai" --name-only *.md'));
+$gitDates = explode("\n", shell_exec('git log --pretty="%ai" --name-only'));
 $fileDates = array();
 $date = null;
+
 foreach($gitDates as $ligne) {
     if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
         $date = new \DateTime($ligne);
@@ -39,6 +35,8 @@ foreach($gitDates as $ligne) {
 
     $fileDates[$ligne] = $date;
 }
+
+arsort($fileDates);
 
 $i = 0;
 
@@ -67,7 +65,7 @@ foreach($fileDates as $file => $date) {
 
     $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
     $i++;
-    if($limit !== false && $i > $limit) {
+    if($limit !== false && $i >= $limit) {
 	break;
     }
 }
@@ -113,7 +111,7 @@ if(isset($_GET['pad'])) {
                     </tr>
                 <?php endforeach; ?>
 		<?php if($limit !== false): ?>
-			<tr><td colspan="6"><center><a href="?limit=<?php echo $limit + 50 ?>">Voir plus de résultats</a></center></td></tr>
+			<tr><td colspan="6"><center><a href="?limit=<?php echo $limit + 100 ?>">Voir plus de résultats</a></center></td></tr>
 		<?php endif; ?>
 	     </tbody>
         </table>
