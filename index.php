@@ -81,11 +81,14 @@ if(isset($_GET['pad'])) {
         <h2>Historique des pads <small style="font-size:14px;" class="text-muted">Dépôt GIT : <a href="ssh://git@tinc.24eme.fr:pads.git">git@tinc.24eme.fr:pads.git</a></small></h2>
 
         <form method="GET" class="mt-3">
-            <div class="input-group">
+            <div class="input-group position-relative">
                 <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button">Rechercher</button>
                 </div>
+                <?php if($q): ?>
+                <a href="/" class="small float-right position-absolute"style="z-index: 3; right: 120px; top: 8px;">Annuler la recherche</a>
+                <?php endif; ?>
             </div>
         </form>
         <table class="table table-bordered table-striped table-sm mt-3">
