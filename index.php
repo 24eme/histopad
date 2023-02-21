@@ -1,9 +1,6 @@
 <?php
-$directory = dirname(__FILE__);
 
-require $directory."/autoload.php";
-
-$parser = new Mni\FrontYAML\Parser();
+require dirname(__FILE__)."/app.php";
 
 $pads = array();
 
@@ -47,21 +44,7 @@ foreach($fileDates as $file => $date) {
         continue;
     }
 
-    $pad = new stdClass();
-    $pad->path = $directory."/".$file;
-    $pad->uri_markdown = $file;
-    $pad->uri_txt = str_replace(".md", ".txt", $file);
-    $pad->uri = str_replace(".md", "", $file);
-
-    try {
-    	$document = $parser->parse(file_get_contents($pad->path), false);
-	$parameters = $document->getYAML();
-    } catch(Exception $e) {
-	$parameters = array("title" => "", "url" => "");
-    }
-
-    $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
-    $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
+    $pad = getPadFromFile($file, false);
     $pad->date = $date;
 
     if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
@@ -108,9 +91,10 @@ if(isset($_GET['pad'])) {
         <table class="table table-bordered table-striped table-sm mt-3">
             <thead>
                 <tr>
-                    <th>Date de modif.</th>
+                    <th>Date</th>
                     <th>Titre</th>
-                    <th colspan="4">Contenu</th>
+                    <th>Pad</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -118,10 +102,8 @@ if(isset($_GET['pad'])) {
                     <tr>
                         <td><?php echo $pad->date->format('d/m/Y'); ?></td>
                         <td><?php echo substr($pad->title, 0, 58); ?><?php if(strlen($pad->title) > 58): ?>...<?php endif; ?></td>
-                        <td><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">HTML</a></td>
-                        <td><a href="<?php echo $pad->uri_markdown; ?>">Markdown</a></td>
-                        <td><a href="<?php echo $pad->uri_txt; ?>">Text</a></td>
                         <td><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
+                        <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">Voir</></td>
                     </tr>
                 <?php endforeach; ?>
 		<?php if($limit !== false): ?>
@@ -134,17 +116,7 @@ if(isset($_GET['pad'])) {
     <div id="modalViewer" class="modal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-body">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <div class="ajaxContenu">
 
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                </div>
             </div>
         </div>
     </div>
@@ -158,14 +130,14 @@ if(isset($_GET['pad'])) {
         $(document).ready(function() {
 
             <?php if($openPad): ?>
-                $('#modalViewer .ajaxContenu').load("viewer.php?file=<?php echo $openPad ?>", function() {
+                $('#modalViewer .modal-content').load("viewer.php?file=<?php echo $openPad ?>", function() {
                     $('#modalViewer').modal();
                 });
             <?php endif; ?>
 
             $('.openModalViewer').on('click', function(e) {
                 history.pushState(null, null, window.location.pathname+"?pad="+$(this).attr('data-identifiant'));
-                $('#modalViewer .ajaxContenu').load($(this).attr('href'), function() {
+                $('#modalViewer .modal-content').load($(this).attr('href'), function() {
                     $('#modalViewer').modal();
                 });
                 e.preventDefault();
