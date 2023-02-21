@@ -32,6 +32,10 @@ foreach($gitDates as $ligne) {
         continue;
     }
 
+    if(!file_exists(dirname(__FILE__)."/".$ligne)) {
+        continue;
+    }
+
     $fileDates[$ligne] = $date;
 }
 
