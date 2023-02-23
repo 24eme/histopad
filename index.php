@@ -82,7 +82,7 @@ if(isset($_GET['pad'])) {
 </head>
 <body>
     <div class="container pt-3">
-        <h2>Historique des pads <small style="font-size:14px;" class="text-muted">Dépôt GIT : <a href="ssh://git@tinc.24eme.fr:pads.git">git@tinc.24eme.fr:pads.git</a></small></h2>
+        <h2>Historique des pads</h2>
 
         <form method="GET" class="mt-3">
             <div class="input-group position-relative">
