@@ -14,7 +14,7 @@ if(isset($_GET['limit']) && $_GET['limit'] == -1) {
 
 $q = (isset($_GET['q']) && trim($_GET['q'])) ? $_GET['q'] : null;
 
-$gitDates = explode("\n", shell_exec('git log --pretty="%ai" --name-only'));
+$gitDates = explode("\n", shell_exec('cd '.$config['pads_folder'].'; git log --pretty="%ai" --name-only'));
 $fileDates = array();
 $date = null;
 
@@ -32,7 +32,7 @@ foreach($gitDates as $ligne) {
         continue;
     }
 
-    if(!file_exists(dirname(__FILE__)."/".$ligne)) {
+    if(!file_exists($config['pads_folder']."/".$ligne)) {
         continue;
     }
 
@@ -48,7 +48,7 @@ foreach($fileDates as $file => $date) {
         continue;
     }
 
-    $pad = getPadFromFile($file, false);
+    $pad = getPadFromFile($config['pads_folder']."/".$file, false);
     $pad->date = $date;
 
     if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {

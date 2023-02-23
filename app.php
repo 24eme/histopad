@@ -1,16 +1,17 @@
 <?php
 
+$config=[];
+$config['pads_folder'] = 'pads';
+
 require dirname(__FILE__)."/autoload.php";
 
 function getPadFromFile($file, $loadContent) {
-    $directory = dirname(__FILE__);
     $parser = new Mni\FrontYAML\Parser();
     $pad = new stdClass();
-    $pad->path = $directory."/".$file;
+    $pad->path = $file;
     $pad->uri_markdown = $file;
     $pad->uri_txt = str_replace(".md", ".txt", $file);
     $pad->uri = str_replace(".md", "", $file);
-
     try {
         $document = $parser->parse(file_get_contents($pad->path), $loadContent);
     $parameters = $document->getYAML();
