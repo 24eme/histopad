@@ -1,30 +1,77 @@
 <?php
 
-$config=[];
+global $config;
+$config = [];
 $config['pads_folder'] = 'pads';
 
 require dirname(__FILE__)."/autoload.php";
 
-function getPadFromFile($file, $loadContent) {
-    $parser = new Mni\FrontYAML\Parser();
-    $pad = new stdClass();
-    $pad->path = $file;
-    $pad->uri_markdown = $file;
-    $pad->uri_txt = str_replace(".md", ".txt", $file);
-    $pad->uri = str_replace(".md", "", $file);
-    try {
-        $document = $parser->parse(file_get_contents($pad->path), $loadContent);
-    $parameters = $document->getYAML();
-    } catch(Exception $e) {
-    $parameters = array("title" => "", "url" => "");
+class Config
+{
+    public static $config = ['pads_folder' => 'pads'];
+}
+
+class Pad
+{
+    public $uri = null;
+    public $date = null;
+    public $url = null;
+    public $title = null;
+    public $content = null;
+
+    public function __construct($uri, $date) {
+        $this->uri = $uri;
+        $this->date = $date;
+        $this->url = file_get_contents($this->uri.'.url');
+        $fp = @fopen($this->uri.'.txt', 'r');
+        $this->title = fgets($fp);
+        fclose($fp);
+        $this->content = null;
     }
 
-    if($loadContent) {
-        $pad->content = $document->getContent();
+    public function getContent() {
+        
+        return nl2br(file_get_contents($this->uri.'.txt'));
+    }
+}
+
+function getPads($q = null) {
+    $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
+    $fileDates = array();
+    $date = null;
+
+    foreach($gitDates as $ligne) {
+        if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
+            $date = new \DateTime($ligne);
+            continue;
+        }
+
+        if(!preg_match('/\.txt/', $ligne)) {
+            continue;
+        }
+
+        if(isset($fileDates[$ligne])) {
+            continue;
+        }
+
+        if(!file_exists(Config::$config['pads_folder']."/".$ligne)) {
+            continue;
+        }
+
+        $fileDates[str_replace('.txt', '', $ligne)] = $date;
     }
 
-    $pad->title = isset($parameters['title']) ? $parameters['title'] : null;
-    $pad->url = isset($parameters['url']) ? $parameters['url'] : null;
+    arsort($fileDates);
 
-    return $pad;
+    foreach($fileDates as $file => $date) {
+        $pad = new Pad(Config::$config['pads_folder']."/".$file, $date);
+        if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
+            continue;
+        }
+        $pads[$pad->uri] = $pad;
+    }
+
+    uasort($pads, function($p1, $p2) { return $p1->date < $p2->date; });
+
+    return $pads;
 }

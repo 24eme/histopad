@@ -14,55 +14,7 @@ if(isset($_GET['limit']) && $_GET['limit'] == -1) {
 
 $q = (isset($_GET['q']) && trim($_GET['q'])) ? $_GET['q'] : null;
 
-$gitDates = explode("\n", shell_exec('cd '.$config['pads_folder'].'; git log --pretty="%ai" --name-only'));
-$fileDates = array();
-$date = null;
-
-foreach($gitDates as $ligne) {
-    if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
-        $date = new \DateTime($ligne);
-        continue;
-    }
-
-    if(!preg_match('/\.md/', $ligne)) {
-        continue;
-    }
-
-    if(isset($fileDates[$ligne])) {
-        continue;
-    }
-
-    if(!file_exists($config['pads_folder']."/".$ligne)) {
-        continue;
-    }
-
-    $fileDates[$ligne] = $date;
-}
-
-arsort($fileDates);
-
-$i = 0;
-
-foreach($fileDates as $file => $date) {
-    if(!preg_match('/\.md$/', $file)) {
-        continue;
-    }
-
-    $pad = getPadFromFile($config['pads_folder']."/".$file, false);
-    $pad->date = $date;
-
-    if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
-        continue;
-    }
-
-    $pads[$pad->date->format('Y-m-d').$pad->path] = $pad;
-    $i++;
-    if($limit !== false && $i >= $limit) {
-	break;
-    }
-}
-
-krsort($pads);
+$pads = array_slice(getPads($q), 0, $limit);
 
 $openPad = null;
 if(isset($_GET['pad'])) {
@@ -98,8 +50,8 @@ if(isset($_GET['pad'])) {
         <table class="table table-bordered table-striped table-sm mt-3">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Titre</th>
+                    <th class="col-1">Date</th>
+                    <th class="col-6">Titre</th>
                     <th>Pad</th>
                     <th></th>
                 </tr>
@@ -108,8 +60,8 @@ if(isset($_GET['pad'])) {
                 <?php foreach($pads as $pad): ?>
                     <tr>
                         <td><?php echo $pad->date->format('d/m/Y'); ?></td>
-                        <td><?php echo substr($pad->title, 0, 58); ?><?php if(strlen($pad->title) > 58): ?>...<?php endif; ?></td>
-                        <td><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
+                        <td><?php echo $pad->title ?></td>
+                        <td style=""><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
                         <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">Voir</></td>
                     </tr>
                 <?php endforeach; ?>
