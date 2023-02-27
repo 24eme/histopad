@@ -4,8 +4,6 @@ global $config;
 $config = [];
 $config['pads_folder'] = 'pads';
 
-require dirname(__FILE__)."/autoload.php";
-
 class Config
 {
     public static $config = ['pads_folder' => 'pads'];
