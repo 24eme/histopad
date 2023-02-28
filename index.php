@@ -39,7 +39,7 @@ if(isset($_GET['pad'])) {
             <div class="input-group position-relative">
                 <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">Rechercher</button>
+                    <button class="btn btn-outline-secondary" type="submit">Rechercher</button>
                 </div>
                 <?php if($q): ?>
                 <a href="?q=" class="small float-right position-absolute"style="z-index: 3; right: 120px; top: 8px;">Annuler la recherche</a>
