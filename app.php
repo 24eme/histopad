@@ -46,7 +46,20 @@ class Pad
 
 class PadClient
 {
-    public static function getAll($q = null) {
+    public static function search($q = null) {
+        $pads = self::getAll();
+        if($q) {
+            foreach($pads as $k => $pad) {
+                if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
+                    unset($pads[$k]);
+                }
+            }
+        }
+
+        return $pads;
+    }
+
+    public static function getAll() {
         $cachePadsFile = Config::getCachePadsFile();
 
         if(file_exists($cachePadsFile)) {
@@ -83,9 +96,6 @@ class PadClient
 
         foreach($fileDates as $file => $date) {
             $pad = new Pad(Config::$config['pads_folder']."/".$file, $date);
-            if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
-                continue;
-            }
             $pads[$pad->uri] = $pad;
         }
 
