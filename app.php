@@ -1,12 +1,23 @@
 <?php
 
-global $config;
-$config = [];
-$config['pads_folder'] = 'pads';
-
 class Config
 {
     public static $config = ['pads_folder' => 'pads'];
+
+    public static function getCacheDir() {
+
+        return 'cache';
+    }
+
+    public static function getLastCommit() {
+
+        return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/ORIG_HEAD'));
+    }
+
+    public static function getCachePadsFile() {
+
+        return self::getCacheDir().'/'.self::getLastCommit().'php.serialize';
+    }
 }
 
 class Pad
@@ -36,6 +47,13 @@ class Pad
 class PadClient
 {
     public static function getAll($q = null) {
+        $cachePadsFile = Config::getCachePadsFile();
+
+        if(file_exists($cachePadsFile)) {
+
+            return unserialize(file_get_contents($cachePadsFile));
+        }
+
         $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
         $fileDates = array();
         $date = null;
@@ -72,6 +90,8 @@ class PadClient
         }
 
         uasort($pads, function($p1, $p2) { return $p1->date < $p2->date; });
+
+        file_put_contents($cachePadsFile, serialize($pads));
 
         return $pads;
     }
