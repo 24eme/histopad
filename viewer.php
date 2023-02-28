@@ -3,7 +3,7 @@ $directory = dirname(__FILE__);
 
 require $directory."/app.php";
 
-$pad = getPads()[$_GET['file']];
+$pad = PadClient::find($_GET['file']);
 
 ?>
 <div class="modal-header">

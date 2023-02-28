@@ -14,7 +14,7 @@ if(isset($_GET['limit']) && $_GET['limit'] == -1) {
 
 $q = (isset($_GET['q']) && trim($_GET['q'])) ? $_GET['q'] : null;
 
-$pads = array_slice(getPads($q), 0, $limit);
+$pads = array_slice(PadClient::getAll($q), 0, $limit);
 
 $openPad = null;
 if(isset($_GET['pad'])) {

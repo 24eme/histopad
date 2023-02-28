@@ -28,48 +28,56 @@ class Pad
     }
 
     public function getContent() {
-        
+
         return nl2br(file_get_contents($this->uri.'.txt'));
     }
 }
 
-function getPads($q = null) {
-    $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
-    $fileDates = array();
-    $date = null;
+class PadClient
+{
+    public static function getAll($q = null) {
+        $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
+        $fileDates = array();
+        $date = null;
 
-    foreach($gitDates as $ligne) {
-        if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
-            $date = new \DateTime($ligne);
-            continue;
+        foreach($gitDates as $ligne) {
+            if(preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $ligne)) {
+                $date = new \DateTime($ligne);
+                continue;
+            }
+
+            if(!preg_match('/\.txt/', $ligne)) {
+                continue;
+            }
+
+            if(isset($fileDates[$ligne])) {
+                continue;
+            }
+
+            if(!file_exists(Config::$config['pads_folder']."/".$ligne)) {
+                continue;
+            }
+
+            $fileDates[str_replace('.txt', '', $ligne)] = $date;
         }
 
-        if(!preg_match('/\.txt/', $ligne)) {
-            continue;
+        arsort($fileDates);
+
+        foreach($fileDates as $file => $date) {
+            $pad = new Pad(Config::$config['pads_folder']."/".$file, $date);
+            if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
+                continue;
+            }
+            $pads[$pad->uri] = $pad;
         }
 
-        if(isset($fileDates[$ligne])) {
-            continue;
-        }
+        uasort($pads, function($p1, $p2) { return $p1->date < $p2->date; });
 
-        if(!file_exists(Config::$config['pads_folder']."/".$ligne)) {
-            continue;
-        }
-
-        $fileDates[str_replace('.txt', '', $ligne)] = $date;
+        return $pads;
     }
 
-    arsort($fileDates);
+    public static function find($uri) {
 
-    foreach($fileDates as $file => $date) {
-        $pad = new Pad(Config::$config['pads_folder']."/".$file, $date);
-        if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
-            continue;
-        }
-        $pads[$pad->uri] = $pad;
+        return PadClient::getAll()[$uri];
     }
-
-    uasort($pads, function($p1, $p2) { return $p1->date < $p2->date; });
-
-    return $pads;
 }
