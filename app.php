@@ -18,6 +18,88 @@ class Config
 
         return self::getCacheDir().'/'.self::getLastCommit().'.php.serialize';
     }
+
+    public static function getQueueDir() {
+
+        return 'queue';
+    }
+
+    public static function getQueueLockFile() {
+
+        return self::getQueueDir().'/.lock';
+    }
+}
+
+class Archive
+{
+    public static function add($url) {
+        $fileName = preg_replace('#^.+\/#', '', $url);
+        file_put_contents(Config::getQueueDir().'/'.$fileName.'.url' ,$url);
+    }
+
+    public static function commit($queueFile) {
+        $url = file_get_contents($queueFile);
+        $fileName = preg_replace('#^.+\/#', '', $url);
+
+        $txtContent = @file_get_contents($url.'/export/txt');
+
+        if(strpos($http_response_header[0], '200 OK') === false) {
+            echo "Le texte du pad n'a pu être récupéré : ".$http_response_header[0]."\n";
+            return;
+        }
+
+        if(strpos($txtContent, "Le contenu de ce pad a été effacé") !== false) {
+            echo "Le texte du pad a été effacé\n";
+            return;
+        }
+
+        file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.txt' ,$txtContent);
+        file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.url' ,$url);
+
+        $mdContent = @file_get_contents($url.'/export/markdown');
+        if(strpos($http_response_header[0], '200 OK') !== false) {
+            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.md' ,$mdContent);
+        }
+
+        $htmlContent = @file_get_contents($url.'/export/html');
+        if(strpos($http_response_header[0], '200 OK') !== false) {
+            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.html' ,$htmlContent);
+        }
+
+        $etherpadContent = @file_get_contents($url.'/export/etherpad');
+        if(strpos($http_response_header[0], '200 OK') !== false) {
+            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.etherpad' ,$etherpadContent);
+        }
+
+        echo shell_exec('cd '.Config::$config['pads_folder'].' && git add '.escapeshellarg($fileName).'.*');
+        echo shell_exec('cd '.Config::$config['pads_folder'].' && git commit -m "Archivage du pad : '.escapeshellarg($url).'"');
+
+        unlink($queueFile);
+    }
+
+    public static function run() {
+        if(file_exists(Config::getQueueLockFile())) {
+            echo "Run is lock. Delete \"".Config::getQueueLockFile()."\" file to unlock it.\n";
+
+            return;
+        }
+
+        touch(Config::getQueueLockFile());
+        if(!is_dir(Config::$config['pads_folder'].'/.git')) {
+            shell_exec('cd '.Config::$config['pads_folder'].' && git init 2> /dev/null');
+        }
+
+        shell_exec('cd '.Config::$config['pads_folder'].' && git pull -r 2> /dev/null');
+
+        foreach(glob(Config::getQueueDir().'/*.url') as $queueFile) {
+            Archive::commit($queueFile);
+            touch(Config::getQueueLockFile());
+        }
+
+        shell_exec('cd '.Config::$config['pads_folder'].' && git push 2> /dev/null');
+
+        unlink(Config::getQueueLockFile());
+    }
 }
 
 class Pad
