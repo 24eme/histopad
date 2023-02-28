@@ -16,7 +16,7 @@ class Config
 
     public static function getCachePadsFile() {
 
-        return self::getCacheDir().'/'.self::getLastCommit().'php.serialize';
+        return self::getCacheDir().'/'.self::getLastCommit().'.php.serialize';
     }
 }
 
