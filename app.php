@@ -28,6 +28,11 @@ class Config
 
         return self::getQueueDir().'/.lock';
     }
+
+    public static function getRegexpPad() {
+
+        return "https://[^/]*[/pad]*/p/[éàèêùûâ;a-zA-Z0-9_,\"-]+";
+    }
 }
 
 class Archive
@@ -44,12 +49,14 @@ class Archive
         $txtContent = @file_get_contents($url.'/export/txt');
 
         if(strpos($http_response_header[0], '200 OK') === false) {
-            echo "Le texte du pad n'a pu être récupéré : ".$http_response_header[0]."\n";
+            echo "Le texte du pad $url n'a pu être récupéré : ".$http_response_header[0]."\n";
+            unlink($queueFile);
             return;
         }
 
         if(strpos($txtContent, "Le contenu de ce pad a été effacé") !== false) {
             echo "Le texte du pad a été effacé\n";
+            unlink($queueFile);
             return;
         }
 
@@ -78,13 +85,13 @@ class Archive
     }
 
     public static function run() {
-        if(file_exists(Config::getQueueLockFile())) {
+        if(file_exists(Config::getQueueLockFile()) && (time() - filemtime(Config::getQueueLockFile())) < 300) {
             echo "Run is lock. Delete \"".Config::getQueueLockFile()."\" file to unlock it.\n";
-
             return;
         }
 
         touch(Config::getQueueLockFile());
+
         if(!is_dir(Config::$config['pads_folder'].'/.git')) {
             shell_exec('cd '.Config::$config['pads_folder'].' && git init 2> /dev/null');
         }
@@ -191,5 +198,11 @@ class PadClient
     public static function find($uri) {
 
         return PadClient::getAll()[$uri];
+    }
+
+    public static function extractUrls($content) {
+        preg_match_all('#'.Config::getRegexpPad().'#', $content, $urls);
+
+        return array_values(array_unique($urls[0]));
     }
 }
