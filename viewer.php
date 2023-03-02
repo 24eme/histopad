@@ -18,11 +18,11 @@ $pad = PadClient::find($_GET['file']);
 <table class="table table-striped table-bordered table-sm mb-0">
     <tr>
         <th class="col-3">Dernière modification</th>
-        <td><?php echo $pad->date->format('d/m/Y H:i:s'); ?></td>
+        <td><?php echo $pad->date->format('d/m/Y à H\hi'); ?></td>
     </tr>
     <tr>
         <th>Archivage planifié</th>
-        <td><?php if($pad->getDateNextArchivage()): ?><?php echo $pad->getDateNextArchivage()->format('d/m/Y H:i:s'); ?><?php else : ?>Aucune<?php endif; ?></td>
+        <td><?php if($pad->getDateNextArchivage()): ?><?php echo $pad->getDateNextArchivage()->format('d/m/Y à H\hi'); ?><?php else : ?>Aucune<?php endif; ?></td>
     </tr>
     <tr>
         <th>Export</th>

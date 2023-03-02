@@ -49,7 +49,7 @@ if(isset($_GET['pad'])) {
         <table class="table table-bordered table-striped table-sm mt-3">
             <thead>
                 <tr>
-                    <th class="col-1">Date</th>
+                    <th style="width: 0;">Date&nbsp;dern.&nbsp;modif.</th>
                     <th class="col-6">Titre</th>
                     <th>Pad</th>
                     <th></th>
@@ -58,7 +58,7 @@ if(isset($_GET['pad'])) {
             <tbody>
                 <?php foreach($pads as $pad): ?>
                     <tr>
-                        <td><?php echo $pad->date->format('d/m/Y'); ?></td>
+                        <td><?php echo $pad->date->format('d/m/Y'); ?>&nbsp;<?php echo $pad->date->format('H\hi'); ?></td>
                         <td><?php echo $pad->title ?></td>
                         <td style=""><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
                         <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">Voir</></td>
