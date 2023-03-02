@@ -11,7 +11,7 @@ class Config
 
     public static function getLastCommit() {
 
-        return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/ORIG_HEAD'));
+        return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/refs/heads/master'));
     }
 
     public static function getCachePadsFile() {
