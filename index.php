@@ -33,8 +33,9 @@ if(isset($_GET['pad'])) {
 </head>
 <body>
     <div class="container pt-3">
-        <h2>Historique des pads</h2>
+        <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Archiver un pad</button>
 
+        <h2>Historique des pads</h2>
         <form method="GET" class="mt-3">
             <div class="input-group position-relative">
                 <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
@@ -74,7 +75,35 @@ if(isset($_GET['pad'])) {
     <div id="modalViewer" class="modal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
+            </div>
+        </div>
+    </div>
 
+    <div id="modalArchive" class="modal">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Archiver un pad
+                    </h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="form_archive" method="GET" action="archive.php">
+                        <input type="hidden" name="run" value="1" />
+                        <div class="form-group">
+                          <label for="url">Saisissez l'url du pad :</label>
+                          <input type="url" required="required" class="form-control" id="url" name="url" placeholder="https://...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="submit" form="form_archive" class="btn btn-primary">Valider</button>
+                </div>
             </div>
         </div>
     </div>

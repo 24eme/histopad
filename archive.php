@@ -29,3 +29,12 @@ foreach($urls as $url) {
     Archive::add($url);
     echo "$url in queue to be archived\n";
 }
+
+if(isset($_GET['run']) && $_GET['run']) {
+    Archive::run();
+}
+
+if(isset($_GET['url'])) {
+
+    header('Location: /');
+}

@@ -22,7 +22,7 @@ $pad = PadClient::find($_GET['file']);
     </tr>
     <tr>
         <th>Archivage planifié</th>
-        <td><?php if($pad->getDateNextArchivage()): ?><?php echo $pad->getDateNextArchivage()->format('d/m/Y à H\hi'); ?><?php else : ?>Aucune<?php endif; ?></td>
+        <td><?php if($pad->getDateNextArchivage()): ?><?php echo $pad->getDateNextArchivage()->format('d/m/Y à H\hi'); ?><?php else : ?>Aucun<?php endif; ?></td>
     </tr>
     <tr>
         <th>Export</th>
