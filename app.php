@@ -37,14 +37,18 @@ class Config
 
 class Archive
 {
-    public static function add($url) {
-        $fileName = preg_replace('#^.+\/#', '', $url);
-        file_put_contents(Config::getQueueDir().'/'.$fileName.'.url' ,$url);
+    public static function add($url, $time = null) {
+        $file = Config::getQueueDir().'/'.preg_replace('#^.+\/#', '', $url).'.url';
+        file_put_contents($file, $url);
+        if($time) {
+            touch($file, $time);
+        }
     }
 
     public static function commit($queueFile) {
         $url = file_get_contents($queueFile);
         $fileName = preg_replace('#^.+\/#', '', $url);
+        $file = Config::$config['pads_folder'].'/'.$fileName;
 
         $txtContent = @file_get_contents($url.'/export/txt');
 
@@ -60,28 +64,37 @@ class Archive
             return;
         }
 
-        file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.txt' ,$txtContent);
-        file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.url' ,$url);
+        file_put_contents($file.'.txt', $txtContent);
+        file_put_contents($file.'.url', $url);
 
         $mdContent = @file_get_contents($url.'/export/markdown');
         if(strpos($http_response_header[0], '200 OK') !== false) {
-            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.md' ,$mdContent);
+            file_put_contents($file.'.md', $mdContent);
         }
 
         $htmlContent = @file_get_contents($url.'/export/html');
         if(strpos($http_response_header[0], '200 OK') !== false) {
-            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.html' ,$htmlContent);
+            file_put_contents($file.'.html', $htmlContent);
         }
 
         $etherpadContent = @file_get_contents($url.'/export/etherpad');
         if(strpos($http_response_header[0], '200 OK') !== false) {
-            file_put_contents(Config::$config['pads_folder'].'/'.$fileName.'.etherpad' ,$etherpadContent);
+            file_put_contents($file.'.etherpad', $etherpadContent);
         }
 
         echo shell_exec('cd '.Config::$config['pads_folder'].' && git add '.escapeshellarg($fileName).'.*');
         echo shell_exec('cd '.Config::$config['pads_folder'].' && git commit -m "Archivage du pad : '.escapeshellarg($url).'"');
 
         unlink($queueFile);
+
+        echo "Archivage du pad ".$url."\n";
+
+        $pad = PadClient::find($file);
+        $pad->planNextUpdate();
+
+        if($pad->getDateNextArchivage()) {
+            echo "Nouvelle archivage du pad ".$pad->url." planifié le ".$pad->getDateNextArchivage()->format('Y-m-d H:i:s')."\n";
+        }
     }
 
     public static function run() {
@@ -99,6 +112,9 @@ class Archive
         shell_exec('cd '.Config::$config['pads_folder'].' && git pull -r 2> /dev/null');
 
         foreach(glob(Config::getQueueDir().'/*.url') as $queueFile) {
+            if(filemtime($queueFile) > time()) {
+                continue;
+            }
             Archive::commit($queueFile);
             touch(Config::getQueueLockFile());
         }
@@ -112,14 +128,16 @@ class Archive
 class Pad
 {
     public $uri = null;
+    public $filename = null;
     public $date = null;
     public $url = null;
     public $title = null;
     public $content = null;
 
-    public function __construct($uri, $date) {
+    public function __construct($uri) {
         $this->uri = $uri;
-        $this->date = $date;
+        $this->filename = str_replace(Config::$config['pads_folder'].'/', '', $uri);
+        $this->date = PadClient::getDatesCommit()[$this->filename];
         $this->url = file_get_contents($this->uri.'.url');
         $fp = @fopen($this->uri.'.txt', 'r');
         $this->title = fgets($fp);
@@ -131,10 +149,26 @@ class Pad
 
         return nl2br(file_get_contents($this->uri.'.txt'));
     }
+
+    public function planNextUpdate() {
+        $hourDiff = floor((time() - $this->date->format('U')) / 3600) + 1;
+        Archive::add($this->url, time() + $hourDiff * 3600);
+    }
+
+    public function getDateNextArchivage() {
+        if(!file_exists(Config::getQueueDir().'/'.$this->filename.'.url')) {
+
+            return null;
+        }
+
+        return new \DateTime(date('Y-m-d H:i:s', filemtime(Config::getQueueDir().'/'.$this->filename.'.url')));
+    }
 }
 
 class PadClient
 {
+    public static $datesCommit = null;
+
     public static function search($q = null) {
         $pads = self::getAll();
         if($q) {
@@ -148,12 +182,10 @@ class PadClient
         return $pads;
     }
 
-    public static function getAll() {
-        $cachePadsFile = Config::getCachePadsFile();
+    public static function getDatesCommit() {
+        if(!is_null(self::$datesCommit)) {
 
-        if(file_exists($cachePadsFile)) {
-
-            return unserialize(file_get_contents($cachePadsFile));
+            return self::$datesCommit;
         }
 
         $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
@@ -183,8 +215,23 @@ class PadClient
 
         arsort($fileDates);
 
-        foreach($fileDates as $file => $date) {
-            $pad = new Pad(Config::$config['pads_folder']."/".$file, $date);
+        self::$datesCommit = $fileDates;
+
+        return self::$datesCommit;
+    }
+
+    public static function getAll() {
+        $cachePadsFile = Config::getCachePadsFile();
+
+        if(file_exists($cachePadsFile)) {
+
+            return unserialize(file_get_contents($cachePadsFile));
+        }
+
+        self::$datesCommit = null;
+
+        foreach(array_keys(self::getDatesCommit()) as $file) {
+            $pad = new Pad(Config::$config['pads_folder']."/".$file);
             $pads[$pad->uri] = $pad;
         }
 
