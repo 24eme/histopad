@@ -30,5 +30,5 @@ $pad = PadClient::find($_GET['file']);
             <td><a href="<?php echo $pad->uri.'.txt'; ?>">Texte</a> | <a href="<?php echo $pad->uri.'.md'; ?>">Markdown</a> | <a href="<?php echo $pad->uri.'.html'; ?>">HTML</a> | <a href="<?php echo $pad->uri.'.etherpad'; ?>">Etherpad</a> | <a href="<?php echo $pad->url; ?>">Lien</a></td>
         </tr>
     </table>
-    <?php echo $pad->getContent(); ?>
+    <?php echo htmlspecialchars($pad->getContent()); ?>
 </div>

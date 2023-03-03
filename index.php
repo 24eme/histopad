@@ -60,7 +60,7 @@ if(isset($_GET['pad'])) {
                 <?php foreach($pads as $pad): ?>
                     <tr>
                         <td><?php echo $pad->date->format('d/m/Y'); ?></td>
-                        <td><?php echo $pad->title ?></td>
+                        <td><?php echo htmlspecialchars($pad->title) ?></td>
                         <td style=""><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
                         <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">Voir</></td>
                     </tr>
