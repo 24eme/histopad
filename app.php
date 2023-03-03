@@ -2,7 +2,10 @@
 
 class Config
 {
-    public static $config = ['pads_folder' => 'pads'];
+    public static function getPadsDir() {
+
+        return 'pads';
+    }
 
     public static function getCacheDir() {
 
@@ -10,14 +13,14 @@ class Config
     }
 
     public static function getLastCommit() {
-        if(file_exists(Config::$config['pads_folder'].'/.git/refs/heads/master')) {
+        if(file_exists(Config::getPadsDir().'/.git/refs/heads/master')) {
 
-            return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/refs/heads/master'));
+            return str_replace("\n", "", file_get_contents(Config::getPadsDir().'/.git/refs/heads/master'));
         }
 
-        if(file_exists(Config::$config['pads_folder'].'/.git/info/refs')) {
+        if(file_exists(Config::getPadsDir().'/.git/info/refs')) {
 
-            return explode("\t", file_get_contents(Config::$config['pads_folder'].'/.git/info/refs'))[0];
+            return explode("\t", file_get_contents(Config::getPadsDir().'/.git/info/refs'))[0];
         }
 
         throw new Excption("Ref du dernier commit non trouvé");
@@ -57,7 +60,7 @@ class Archive
     public static function commit($queueFile) {
         $url = file_get_contents($queueFile);
         $fileName = preg_replace('#^.+\/#', '', $url);
-        $file = Config::$config['pads_folder'].'/'.$fileName;
+        $file = Config::getPadsDir().'/'.$fileName;
 
         $txtContent = @file_get_contents($url.'/export/txt');
 
@@ -91,8 +94,8 @@ class Archive
             file_put_contents($file.'.etherpad', $etherpadContent);
         }
 
-        echo shell_exec('cd '.Config::$config['pads_folder'].' && git add '.escapeshellarg($fileName).'.*');
-        echo shell_exec('cd '.Config::$config['pads_folder'].' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs && git checkout master');
+        echo shell_exec('cd '.Config::getPadsDir().' && git add '.escapeshellarg($fileName).'.*');
+        echo shell_exec('cd '.Config::getPadsDir().' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs && git checkout master');
 
         unlink($queueFile);
 
@@ -114,12 +117,12 @@ class Archive
 
         touch(Config::getQueueLockFile());
 
-        if(!is_dir(Config::$config['pads_folder'].'/.git')) {
-            touch(Config::$config['pads_folder'].'/.gitignore');
-            shell_exec('cd '.Config::$config['pads_folder'].' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git gc && git pack-refs');
+        if(!is_dir(Config::getPadsDir().'/.git')) {
+            touch(Config::getPadsDir().'/.gitignore');
+            shell_exec('cd '.Config::getPadsDir().' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git gc && git pack-refs');
         }
 
-        shell_exec('cd '.Config::$config['pads_folder'].' && git pull -r 2> /dev/null');
+        shell_exec('cd '.Config::getPadsDir().' && git pull -r 2> /dev/null');
 
         foreach(glob(Config::getQueueDir().'/*.url') as $queueFile) {
             if(filemtime($queueFile) > time()) {
@@ -129,7 +132,7 @@ class Archive
             touch(Config::getQueueLockFile());
         }
 
-        shell_exec('cd '.Config::$config['pads_folder'].' && git push 2> /dev/null');
+        shell_exec('cd '.Config::getPadsDir().' && git push 2> /dev/null');
 
         unlink(Config::getQueueLockFile());
     }
@@ -146,7 +149,7 @@ class Pad
 
     public function __construct($uri) {
         $this->uri = $uri;
-        $this->filename = str_replace(Config::$config['pads_folder'].'/', '', $uri);
+        $this->filename = str_replace(Config::getPadsDir().'/', '', $uri);
         $this->date = PadClient::getDatesCommit()[$this->filename];
         $this->url = file_get_contents($this->uri.'.url');
         $fp = @fopen($this->uri.'.txt', 'r');
@@ -198,7 +201,7 @@ class PadClient
             return self::$datesCommit;
         }
 
-        $gitDates = explode("\n", shell_exec('cd '.Config::$config['pads_folder'].' && git log --pretty="%ai" --name-only'));
+        $gitDates = explode("\n", shell_exec('cd '.Config::getPadsDir().' && git log --pretty="%ai" --name-only'));
         $fileDates = array();
         $date = null;
 
@@ -216,7 +219,7 @@ class PadClient
                 continue;
             }
 
-            if(!file_exists(Config::$config['pads_folder']."/".$ligne)) {
+            if(!file_exists(Config::getPadsDir()."/".$ligne)) {
                 continue;
             }
 
@@ -241,7 +244,7 @@ class PadClient
         self::$datesCommit = null;
 
         foreach(array_keys(self::getDatesCommit()) as $file) {
-            $pad = new Pad(Config::$config['pads_folder']."/".$file);
+            $pad = new Pad(Config::getPadsDir()."/".$file);
             $pads[$pad->uri] = $pad;
         }
 
