@@ -75,17 +75,17 @@ class Config
         if(!is_writable(Config::getPadsDir())) {
             $errors[] = "Le dossier \"".Config::getPadsDir()."\" n'a pas les droits en écriture.";
         }
-        if(!is_readable(Config::getPadsGitDir())) {
-            $errors[] = "Le dossier \"".Config::getPadsGitDir()."\" n'a pas les droits en lecture.";
+        if(!is_readable(Config::getPadsDir().'/.git')) {
+            $errors[] = "Le dossier \"".Config::getPadsDir()."/.git\" n'a pas les droits en lecture.";
         }
-        if(!is_writable(Config::getPadsGitDir())) {
-            $errors[] = "Le dossier \"".Config::getPadsGitDir()."\" n'a pas les droits en écriture.";
+        if(!is_writable(Config::getPadsDir().'/.git')) {
+            $errors[] = "Le dossier \"".Config::getPadsDir()."/.git\" n'a pas les droits en écriture.";
         }
-        if(!is_readable(Config::getPadsGitDir().'/COMMIT_EDITMSG')) {
-            $errors[] = "Tous les fichiers du dossier \"".Config::getPadsGitDir()."\" n'ont pas les droits en lecture.";
+        if(!is_readable(Config::getPadsDir().'/.git/COMMIT_EDITMSG')) {
+            $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en lecture.";
         }
-        if(!is_writable(Config::getPadsGitDir().'/COMMIT_EDITMSG')) {
-            $errors[] = "Tous les fichiers du dossier \"".Config::getPadsGitDir()."\" n'ont pas les droits en écriture.";
+        if(!is_writable(Config::getPadsDir().'/.git/COMMIT_EDITMSG')) {
+            $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en écriture.";
         }
         if(!is_writable(Config::getQueueDir())) {
             $errors[] = "Le dossier \"".Config::getQueueDir()."\" n'a pas les droits en écriture.";
