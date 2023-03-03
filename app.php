@@ -146,7 +146,7 @@ class Archive
         }
 
         echo shell_exec('cd '.Config::getPadsDir().' && git add '.escapeshellarg($fileName).'.*');
-        echo shell_exec('cd '.Config::getPadsDir().' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs && git checkout master');
+        echo shell_exec('cd '.Config::getPadsDir().' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs');
 
         unlink($queueFile);
 
@@ -266,7 +266,7 @@ class PadClient
                 continue;
             }
 
-            if(isset($fileDates[$ligne])) {
+            if(isset($fileDates[str_replace('.txt', '', $ligne)])) {
                 continue;
             }
 
