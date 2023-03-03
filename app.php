@@ -7,6 +7,11 @@ class Config
         return 'pads';
     }
 
+    public static function getPadsGitDir() {
+
+        return 'pads.git';
+    }
+
     public static function getCacheDir() {
 
         return 'cache';
@@ -53,7 +58,7 @@ class Config
 
     public static function getBaseUrlGit() {
 
-        return self::getBaseUrl().self::getPadsDir().'.git';
+        return self::getBaseUrl().self::getPadsGitDir();
     }
 
     public static function check() {
@@ -69,6 +74,12 @@ class Config
         }
         if(!is_writable(Config::getPadsDir())) {
             $errors[] = "Le dossier \"".Config::getPadsDir()."\" n'a pas les droits en écriture.";
+        }
+        if(!is_readable(Config::getPadsGitDir())) {
+            $errors[] = "Le dossier \"".Config::getPadsGitDir()."\" n'a pas les droits en lecture.";
+        }
+        if(!is_writable(Config::getPadsGitDir())) {
+            $errors[] = "Le dossier \"".Config::getPadsGitDir()."\" n'a pas les droits en écriture.";
         }
         if(!is_writable(Config::getQueueDir())) {
             $errors[] = "Le dossier \"".Config::getQueueDir()."\" n'a pas les droits en écriture.";
