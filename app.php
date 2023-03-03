@@ -10,8 +10,17 @@ class Config
     }
 
     public static function getLastCommit() {
+        if(file_exists(Config::$config['pads_folder'].'/.git/refs/heads/master')) {
 
-        return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/refs/heads/master'));
+            return str_replace("\n", "", file_get_contents(Config::$config['pads_folder'].'/.git/refs/heads/master'));
+        }
+
+        if(file_exists(Config::$config['pads_folder'].'/.git/info/refs')) {
+
+            return explode("\t", file_get_contents(Config::$config['pads_folder'].'/.git/info/refs'))[0];
+        }
+
+        throw new Excption("Ref du dernier commit non trouvé");
     }
 
     public static function getCachePadsFile() {
@@ -83,7 +92,7 @@ class Archive
         }
 
         echo shell_exec('cd '.Config::$config['pads_folder'].' && git add '.escapeshellarg($fileName).'.*');
-        echo shell_exec('cd '.Config::$config['pads_folder'].' && git commit -m "Archivage du pad : '.escapeshellarg($url).'"');
+        echo shell_exec('cd '.Config::$config['pads_folder'].' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs && git checkout master');
 
         unlink($queueFile);
 
@@ -106,7 +115,8 @@ class Archive
         touch(Config::getQueueLockFile());
 
         if(!is_dir(Config::$config['pads_folder'].'/.git')) {
-            shell_exec('cd '.Config::$config['pads_folder'].' && git init 2> /dev/null');
+            touch(Config::$config['pads_folder'].'/.gitignore');
+            shell_exec('cd '.Config::$config['pads_folder'].' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git gc && git pack-refs');
         }
 
         shell_exec('cd '.Config::$config['pads_folder'].' && git pull -r 2> /dev/null');

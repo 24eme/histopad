@@ -21,6 +21,8 @@ if(isset($_GET['pad'])) {
     $openPad = $_GET['pad'];
 }
 
+$gitUrl = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
+
 ?>
 <!DOCTYPE html>
 <html lang="fr_FR">
@@ -35,7 +37,15 @@ if(isset($_GET['pad'])) {
     <div class="container pt-3">
         <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Archiver un pad</button>
 
-        <h2>Historique des pads</h2>
+
+        <h2>Historique des pads
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Git Clone</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="navigator.clipboard.writeText(this.href); alert('Le lien a été copié dans le presse papier !'); return false;" href="<?php echo $gitUrl; ?>"><?php echo $gitUrl; ?></a>
+                </div>
+            </div>
+        </h2>
         <form method="GET" class="mt-3">
             <div class="input-group position-relative">
                 <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
