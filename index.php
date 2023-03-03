@@ -21,7 +21,7 @@ if(isset($_GET['pad'])) {
     $openPad = $_GET['pad'];
 }
 
-$gitUrl = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
+$gitUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
 
 ?>
 <!DOCTYPE html>
