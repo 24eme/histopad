@@ -170,7 +170,7 @@ class Pad
 
     public function getContent() {
 
-        return nl2br(file_get_contents($this->uri.'.txt'));
+        return file_get_contents($this->uri.'.txt');
     }
 
     public function planNextUpdate() {
