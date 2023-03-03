@@ -55,6 +55,30 @@ class Config
 
         return self::getBaseUrl().self::getPadsDir().'.git';
     }
+
+    public static function check() {
+        $errors = array();
+        if(!is_writable(Config::getCacheDir())) {
+            $errors[] = "Le dossier \"".Config::getCacheDir()."\" n'a pas les droits en écriture.";
+        }
+        if(!is_readable(Config::getCacheDir())) {
+            $errors[] = "Le dossier \"".Config::getCacheDir()."\" n'a pas les droits en lecture.";
+        }
+        if(!is_readable(Config::getPadsDir())) {
+            $errors[] = "Le dossier \"".Config::getCacheDir()."\" n'a pas les droits en lecture.";
+        }
+        if(!is_writable(Config::getPadsDir())) {
+            $errors[] = "Le dossier \"".Config::getPadsDir()."\" n'a pas les droits en écriture.";
+        }
+        if(!is_writable(Config::getQueueDir())) {
+            $errors[] = "Le dossier \"".Config::getQueueDir()."\" n'a pas les droits en écriture.";
+        }
+        if(!is_readable(Config::getQueueDir())) {
+            $errors[] = "Le dossier \"".Config::getQueueDir()."\" n'a pas les droits en lecture.";
+        }
+
+        return $errors;
+    }
 }
 
 class Archive

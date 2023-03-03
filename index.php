@@ -2,6 +2,8 @@
 
 require dirname(__FILE__)."/app.php";
 
+$errors = Config::check();
+
 $pads = array();
 
 $limit = 100;
@@ -33,6 +35,14 @@ if(isset($_GET['pad'])) {
 </head>
 <body>
     <div class="container pt-3">
+        <?php if(count($errors)): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php foreach($errors as $error): ?>
+                    <?php echo $error ?><br  />
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
         <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Archiver un pad</button>
 
         <h2>Historique des pads <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-toggle="modal" data-target="#modalClone">Git Clone</button></h2>
