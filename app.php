@@ -81,10 +81,10 @@ class Config
         if(!is_writable(Config::getPadsDir().'/.git')) {
             $errors[] = "Le dossier \"".Config::getPadsDir()."/.git\" n'a pas les droits en écriture.";
         }
-        if(!is_readable(Config::getPadsDir().'/.git/COMMIT_EDITMSG')) {
+        if(!is_readable(Config::getPadsDir().'/.git/index')) {
             $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en lecture.";
         }
-        if(!is_writable(Config::getPadsDir().'/.git/COMMIT_EDITMSG')) {
+        if(!is_writable(Config::getPadsDir().'/.git/index')) {
             $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en écriture.";
         }
         if(!is_writable(Config::getQueueDir())) {
