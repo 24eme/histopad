@@ -36,5 +36,5 @@ if(isset($_GET['run']) && $_GET['run']) {
 
 if(isset($_GET['url'])) {
 
-    header('Location: /');
+    header('Location: '.Config::getBaseUrl());
 }
