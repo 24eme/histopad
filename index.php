@@ -21,8 +21,6 @@ if(isset($_GET['pad'])) {
     $openPad = $_GET['pad'];
 }
 
-$gitUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
-
 ?>
 <!DOCTYPE html>
 <html lang="fr_FR">
@@ -37,15 +35,7 @@ $gitUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
     <div class="container pt-3">
         <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Archiver un pad</button>
 
-
-        <h2>Historique des pads
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Git Clone</button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" onclick="navigator.clipboard.writeText(this.href); alert('Le lien a été copié dans le presse papier !'); return false;" href="<?php echo $gitUrl; ?>"><?php echo $gitUrl; ?></a>
-                </div>
-            </div>
-        </h2>
+        <h2>Historique des pads <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-toggle="modal" data-target="#modalClone">Git Clone</button></h2>
         <form method="GET" class="mt-3">
             <div class="input-group position-relative">
                 <input type="search" autofocus="autofocus" name="q" placeholder="Recherche sur le titre" class="form-control" value="<?php echo $q ?>" autocomplete="off" />
@@ -118,6 +108,29 @@ $gitUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
         </div>
     </div>
 
+    <div id="modalClone" class="modal">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Récupérer le dépôt contenant les pads
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">git clone</span>
+                        </div>
+                        <input type="text" readonly="readonly" class="form-control bg-white" value="<?php echo Config::getBaseUrlGit() ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/jquery.min.js"></script>
     <script src="vendor/popper.min.js"></script>
     <script src="vendor/bootstrap.min.js"></script>
@@ -145,8 +158,13 @@ $gitUrl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].'pads.git';
             $('#modalArchive').on('shown.bs.modal', function (e) {
                 $('#modalArchive [autofocus="autofocus"]').focus();
             })
-            $('#modalArchive').on('shown.bs.modal', function (e) {
+            $('#modalArchive').on('hide.bs.modal', function (e) {
                 $('#modalArchive input[name="url"]').val("");
+            })
+
+            $('#modalClone').on('shown.bs.modal', function (e) {
+                $('#modalClone input').focus();
+                $('#modalClone input').select();
             })
         });
     </script>
