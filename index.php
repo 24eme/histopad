@@ -96,7 +96,7 @@ if(isset($_GET['pad'])) {
                         <input type="hidden" name="run" value="1" />
                         <div class="form-group">
                           <label for="url">Saisissez l'url du pad :</label>
-                          <input type="url" required="required" class="form-control" id="url" name="url" placeholder="https://...">
+                          <input type="url" required="required" class="form-control" id="url" name="url" placeholder="https://..." autofocus="autofocus" autocomplete="off" / >
                         </div>
                     </form>
                 </div>
@@ -130,6 +130,13 @@ if(isset($_GET['pad'])) {
 
             $('#modalViewer').on('hide.bs.modal', function (e) {
                 history.pushState(null, null, window.location.pathname);
+            })
+
+            $('#modalArchive').on('shown.bs.modal', function (e) {
+                $('#modalArchive [autofocus="autofocus"]').focus();
+            })
+            $('#modalArchive').on('shown.bs.modal', function (e) {
+                $('#modalArchive input[name="url"]').val("");
             })
         });
     </script>
