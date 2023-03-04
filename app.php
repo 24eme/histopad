@@ -158,7 +158,7 @@ class Archive
         }
 
         echo shell_exec('cd '.Config::getPadsDir().' && git add '.escapeshellarg($id).'.*');
-        echo shell_exec('cd '.Config::getPadsDir().' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git gc && git pack-refs');
+        echo shell_exec('cd '.Config::getPadsDir().' && git commit -m "Archivage du pad : '.escapeshellarg($url).'" && git repack && git pack-refs');
 
         unlink($queueFile);
 
@@ -182,7 +182,7 @@ class Archive
 
         if(!is_dir(Config::getPadsDir().'/.git')) {
             touch(Config::getPadsDir().'/.gitignore');
-            shell_exec('cd '.Config::getPadsDir().' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git gc && git pack-refs');
+            shell_exec('cd '.Config::getPadsDir().' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git repack && git pack-refs');
         }
 
         shell_exec('cd '.Config::getPadsDir().' && git pull -r 2> /dev/null');
