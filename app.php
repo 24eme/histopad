@@ -127,6 +127,12 @@ class Archive
             return;
         }
 
+        if(strpos($txtContent, "this pad has been deleted") !== false) {
+            echo "Le texte du pad a été effacé\n";
+            unlink($queueFile);
+            return;
+        }
+
         file_put_contents($file.'.txt', $txtContent);
         file_put_contents($file.'.url', $url);
 
