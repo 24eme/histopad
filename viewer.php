@@ -3,12 +3,16 @@ $directory = dirname(__FILE__);
 
 require $directory."/app.php";
 
-$pad = PadClient::find($_GET['file']);
+if(!preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['id'])) {
+    exit;
+}
+
+$pad = PadClient::find($_GET['id']);
 
 ?>
 <div class="modal-header">
     <h5 class="modal-title">
-        <?php echo $pad->title; ?>
+        <?php echo $pad->getTitle(); ?>
     </h5>
 
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -19,7 +23,7 @@ $pad = PadClient::find($_GET['file']);
     <table class="table table-striped table-bordered table-sm">
         <tr>
             <th class="col-3">Dernière modification</th>
-            <td><?php echo $pad->date->format('d/m/Y à H\hi'); ?></td>
+            <td><?php echo $pad->getDate()->format('d/m/Y à H\hi'); ?></td>
         </tr>
         <tr>
             <th>Archivage planifié</th>
@@ -27,7 +31,7 @@ $pad = PadClient::find($_GET['file']);
         </tr>
         <tr>
             <th>Export</th>
-            <td><a href="<?php echo $pad->uri.'.txt'; ?>">Texte</a> | <a href="<?php echo $pad->uri.'.md'; ?>">Markdown</a> | <a href="<?php echo $pad->uri.'.html'; ?>">HTML</a> | <a href="<?php echo $pad->uri.'.etherpad'; ?>">Etherpad</a> | <a href="<?php echo $pad->url; ?>">Lien</a></td>
+            <td><a href="<?php echo $pad->getFile('txt'); ?>">Texte</a> | <a href="<?php echo $pad->getFile('md'); ?>">Markdown</a> | <a href="<?php echo $pad->getFile('html'); ?>">HTML</a> | <a href="<?php echo $pad->getFile('etherpad'); ?>">Etherpad</a> | <a href="<?php echo $pad->getUrl(); ?>">Lien</a></td>
         </tr>
     </table>
     <?php echo nl2br(htmlspecialchars($pad->getContent())); ?>

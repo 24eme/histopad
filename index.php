@@ -19,8 +19,8 @@ $q = (isset($_GET['q']) && trim($_GET['q'])) ? $_GET['q'] : null;
 $pads = array_slice(PadClient::search($q), 0, $limit);
 
 $openPad = null;
-if(isset($_GET['pad'])) {
-    $openPad = $_GET['pad'];
+if(isset($_GET['id'])) {
+    $openPad = $_GET['id'];
 }
 
 ?>
@@ -69,10 +69,10 @@ if(isset($_GET['pad'])) {
             <tbody>
                 <?php foreach($pads as $pad): ?>
                     <tr>
-                        <td><?php echo $pad->date->format('d/m/Y'); ?></td>
-                        <td><?php echo htmlspecialchars($pad->title) ?></td>
-                        <td style=""><a href="<?php echo $pad->url; ?>"><?php echo $pad->url; ?></a></td>
-                        <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->uri; ?>" href="viewer.php?file=<?php echo $pad->uri; ?>">Voir</></td>
+                        <td><?php echo $pad->getDate()->format('d/m/Y'); ?></td>
+                        <td><?php echo htmlspecialchars($pad->getTitle()) ?></td>
+                        <td><a href="<?php echo $pad->getUrl(); ?>"><?php echo $pad->getUrl(); ?></a></td>
+                        <td class="text-center"><a class="openModalViewer" data-identifiant="<?php echo $pad->getId(); ?>" href="viewer.php?id=<?php echo $pad->getId(); ?>">Voir</></td>
                     </tr>
                 <?php endforeach; ?>
 		<?php if($limit !== false): ?>
@@ -148,13 +148,13 @@ if(isset($_GET['pad'])) {
         $(document).ready(function() {
 
             <?php if($openPad): ?>
-                $('#modalViewer .modal-content').load("viewer.php?file=<?php echo $openPad ?>", function() {
+                $('#modalViewer .modal-content').load("viewer.php?id=<?php echo $openPad ?>", function() {
                     $('#modalViewer').modal();
                 });
             <?php endif; ?>
 
             $('.openModalViewer').on('click', function(e) {
-                history.pushState(null, null, window.location.pathname+"?pad="+$(this).attr('data-identifiant'));
+                history.pushState(null, null, window.location.pathname+"?id="+$(this).attr('data-identifiant'));
                 $('#modalViewer .modal-content').load($(this).attr('href'), function() {
                     $('#modalViewer').modal();
                 });
