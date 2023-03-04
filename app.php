@@ -133,6 +133,12 @@ class Archive
             return;
         }
 
+        if(!trim($txtContent)) {
+            echo "Le contenu du pad est vide\n";
+            unlink($queueFile);
+            return;
+        }
+
         file_put_contents($file.'.txt', $txtContent);
         file_put_contents($file.'.url', $url);
 
