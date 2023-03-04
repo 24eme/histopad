@@ -53,7 +53,7 @@ class Config
 
     public static function getBaseUrl() {
 
-        return 'http'.($_SERVER['SERVER_PORT'] == 443 ? 's' : '').'://'.$_SERVER['HTTP_HOST'].'/';
+        return 'http'.($_SERVER['SERVER_PORT'] == 443 ? 's' : '').'://'.$_SERVER['HTTP_HOST'].(isset($_SERVER['CONTEXT_PREFIX']) ? $_SERVER['CONTEXT_PREFIX'] : "").'/';
     }
 
     public static function getBaseUrlGit() {
