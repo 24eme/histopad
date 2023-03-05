@@ -60,7 +60,7 @@ Cette routine est lancé automatiquement à chaque appel de page, donc si la pag
 
 Si l'on souhaite tracker les modifications de façon plus fiable il est possible de faire cette vérification via `crontab`.
 
-Vérifie toutes les 5 minutes si des pads sont à mettre à jour via `curl`.
+Vérifie toutes les 5 minutes si des pads sont à mettre à jour via `curl` :
 
 ```
 */5  *  *  *  * curl -s http://url_de_l_appli/run.php

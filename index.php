@@ -146,6 +146,11 @@ if(isset($_GET['id'])) {
     <script src="vendor/bootstrap.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            setTimeout(function() {
+                const xhttp = new XMLHttpRequest();
+                xhttp.open("GET", 'run.php');
+                xhttp.send();
+            }, 2000);
 
             <?php if($openPad): ?>
                 $('#modalViewer .modal-content').load("viewer.php?id=<?php echo $openPad ?>", function() {
