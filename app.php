@@ -18,6 +18,11 @@ class Config
     }
 
     public static function getLastCommit() {
+        if(!is_dir(Config::getPadsDir().'/.git')) {
+
+            return 'nogit';
+        }
+
         if(file_exists(Config::getPadsDir().'/.git/refs/heads/master')) {
 
             return str_replace("\n", "", file_get_contents(Config::getPadsDir().'/.git/refs/heads/master'));
@@ -62,6 +67,11 @@ class Config
     }
 
     public static function check() {
+        if(!is_dir(Config::getPadsDir().'/.git')) {
+            touch(Config::getPadsDir().'/.gitkeep');
+            shell_exec('cd '.Config::getPadsDir().' && git init 2> /dev/null && git add .gitkeep && git commit -m "Initial commit" && git repack && git pack-refs');
+        }
+
         $errors = array();
         if(!is_writable(Config::getCacheDir())) {
             $errors[] = "Le dossier \"".Config::getCacheDir()."\" n'a pas les droits en écriture.";
@@ -81,10 +91,10 @@ class Config
         if(!is_writable(Config::getPadsDir().'/.git')) {
             $errors[] = "Le dossier \"".Config::getPadsDir()."/.git\" n'a pas les droits en écriture.";
         }
-        if(!is_readable(Config::getPadsDir().'/.git/index')) {
+        if(!is_readable(Config::getPadsDir().'/.git/HEAD')) {
             $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en lecture.";
         }
-        if(!is_writable(Config::getPadsDir().'/.git/index')) {
+        if(!is_writable(Config::getPadsDir().'/.git/HEAD')) {
             $errors[] = "Tous les fichiers du dossier \"".Config::getPadsDir()."/.git\" n'ont pas les droits en écriture.";
         }
         if(!is_writable(Config::getQueueDir())) {
@@ -179,11 +189,6 @@ class Archive
         }
 
         touch(Config::getQueueLockFile());
-
-        if(!is_dir(Config::getPadsDir().'/.git')) {
-            touch(Config::getPadsDir().'/.gitignore');
-            shell_exec('cd '.Config::getPadsDir().' && git init 2> /dev/null && git add . && git commit -m "Initial commit" && git repack && git pack-refs');
-        }
 
         shell_exec('cd '.Config::getPadsDir().' && git pull -r 2> /dev/null');
 
