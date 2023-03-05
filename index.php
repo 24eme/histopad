@@ -141,6 +141,10 @@ if(isset($_GET['id'])) {
         </div>
     </div>
 
+    <footer class="text-center text-muted mt-4 mb-2 opacity-75">
+        <small>Logiciel libre <span class="d-none d-md-inline">sous license AGPL-3.0 </span>: <a href="https://github.com/24eme/histopad">voir le code source</a></small>
+    </footer>
+
     <script src="vendor/jquery.min.js"></script>
     <script src="vendor/popper.min.js"></script>
     <script src="vendor/bootstrap.min.js"></script>
