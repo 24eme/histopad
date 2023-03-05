@@ -66,7 +66,7 @@ Vérifie toutes les 5 minutes si des pads sont à mettre à jour via `curl` :
 */5  *  *  *  * curl -s http://url_de_l_appli/run.php
 ```
 
-### Automatisation d'ajout de pads
+### Automatisation de l'ajout de pads
 
 Il est possible d'ajouter des pads en ligne de commande.
 
