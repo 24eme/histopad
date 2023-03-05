@@ -2,6 +2,10 @@
 
 Mini application web permettant d'historiser des pads (etherpad) et les archiver dans un dépôt git.
 
+## Aperçu
+
+![capture](https://user-images.githubusercontent.com/6379869/222990784-2c9eb458-663c-4178-9f74-9b93ed4fb0fb.gif)
+
 ## License
 
 Logiciel libre sous license AGPL V3
