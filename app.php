@@ -343,7 +343,9 @@ class PadClient
 
         uasort($pads, function($p1, $p2) { return $p1->getDate() < $p2->getDate(); });
 
+        $otherCacheFiles = glob(Config::getCacheDir().'/*.php.serialize');
         file_put_contents($cachePadsFile, serialize($pads));
+        array_map('unlink', $otherCacheFiles);
 
         return $pads;
     }
