@@ -65,3 +65,21 @@ Vérifie toutes les 5 minutes si des pads sont à mettre à jour via `curl` :
 ```
 */5  *  *  *  * curl -s http://url_de_l_appli/run.php
 ```
+
+### Automatisation d'ajout de pads
+
+Il est possible d'ajouter des pads en ligne de commande.
+
+Ajout d'un pad unique :
+
+```
+curl http://url_de_l_appli/archive.php?url=https://url_vers_le_pad_a_archiver/p/code_du_pad
+```
+
+Le script `archive.php` permet aussi d'extraire les urls de pads depuis n'importe quel contenu de texte et tous les ajouter :
+
+```
+cat /tmp/contenu_contenant_des_urls_de_pads | curl http://url_de_l_appli/archive.php -d @-
+```
+
+Par exemple, au 24ème on se sert de notre canal irc pour archiver des pads, en envoyant le `log de la discussion irc` au script `archive.php`, les derniers pads sont archivés automatiquement.

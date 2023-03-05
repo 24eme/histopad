@@ -11,6 +11,12 @@ while($contentStdin = fgets($stdin)) {
 }
 fclose($stdin);
 
+$bodyRequest = file_get_contents('php://input');
+
+if($bodyRequest) {
+    $urls = array_merge($urls, PadClient::extractUrls($bodyRequest));
+}
+
 if(isset($argv)) {
     $urls = array_merge($urls, PadClient::extractUrls(implode(" ", $argv)));
 }
