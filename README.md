@@ -22,7 +22,7 @@ Récupération des sources :
 git clone https://github.com/24eme/histopad.git
 ```
 
-Pour le lancer :
+Pour tester l'application :
 
 ```
 php -S localhost:8000
