@@ -22,6 +22,10 @@ $pad = PadClient::find($_GET['id']);
 <div class="modal-body">
     <table class="table table-striped table-bordered table-sm">
         <tr>
+            <th>Url</th>
+            <td><a href="<?php echo $pad->getUrl(); ?>"><?php echo str_replace($pad->getId(), '<strong>'.$pad->getId().'</strong>', $pad->getUrl()); ?></a></td>
+        </tr>
+        <tr>
             <th class="col-3">Dernière modification</th>
             <td><?php echo $pad->getDate()->format('d/m/Y à H\hi'); ?></td>
         </tr>
@@ -31,7 +35,7 @@ $pad = PadClient::find($_GET['id']);
         </tr>
         <tr>
             <th>Export</th>
-            <td><a href="<?php echo $pad->getFile('txt'); ?>">Texte</a> | <a href="<?php echo $pad->getFile('md'); ?>">Markdown</a> | <a href="<?php echo $pad->getFile('html'); ?>">HTML</a> | <a href="<?php echo $pad->getFile('etherpad'); ?>">Etherpad</a> | <a href="<?php echo $pad->getUrl(); ?>">Lien</a></td>
+            <td><a href="<?php echo $pad->getFile('txt'); ?>">Texte</a> | <a href="<?php echo $pad->getFile('md'); ?>">Markdown</a> | <a href="<?php echo $pad->getFile('html'); ?>">HTML</a> | <a href="<?php echo $pad->getFile('etherpad'); ?>">Etherpad</a></td>
         </tr>
     </table>
     <?php echo nl2br(htmlspecialchars($pad->getContent())); ?>
