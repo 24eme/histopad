@@ -79,7 +79,7 @@ curl http://url_de_l_appli/archive.php?url=https://url_vers_le_pad_a_archiver/p/
 Le script `archive.php` permet aussi d'extraire les urls de pads depuis n'importe quel contenu de texte et tous les ajouter :
 
 ```
-cat /tmp/contenu_contenant_des_urls_de_pads | curl http://url_de_l_appli/archive.php -d @-
+cat /tmp/contenu_contenant_des_urls_de_pads | curl http://url_de_l_appli/archive.php --data-binary @-
 ```
 
 Par exemple, au 24ème on se sert de notre canal irc pour archiver des pads, en envoyant le `log de la discussion irc` au script `archive.php`, les derniers pads sont archivés automatiquement.
