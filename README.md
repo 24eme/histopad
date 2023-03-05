@@ -1,6 +1,6 @@
 # HistoPad
 
-Mini application web permettant d'historiser des pads (etherpad) et de les archiver dans un dépôt git.
+Mini application web permettant d'historiser des pads (etherpad) et les archiver dans un dépôt git.
 
 ## License
 
@@ -30,7 +30,7 @@ php -S localhost:8000
 
 ### Déploiement avec Apache
 
-Droits sur les dossiers *cache*, *queue*, *pads* :
+Droits apache sur les dossiers `cache`, `queue` et `pads` :
 
 ```
 sudo chown www-data:www-data cache queue pads
@@ -39,9 +39,9 @@ sudo chown www-data:www-data cache queue pads
 Configuration Apache :
 
 ```
-DocumentRoot /path/to/histopad/public
+DocumentRoot /path/to/histopad
 
-<Directory /path/to/histopad/public>
+<Directory /path/to/histopad>
     Require all granted
 </Directory
 ```
