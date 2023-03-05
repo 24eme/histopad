@@ -33,7 +33,7 @@ class Config
             return explode("\t", file_get_contents(Config::getPadsDir().'/.git/info/refs'))[0];
         }
 
-        throw new Excption("Ref du dernier commit non trouvé");
+        throw new Exception("Ref du dernier commit non trouvé");
     }
 
     public static function getCachePadsFile() {
