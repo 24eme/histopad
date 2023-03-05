@@ -46,7 +46,7 @@ DocumentRoot /path/to/histopad
 </Directory
 ```
 
-### Mise à jour des modifications pads
+### Mise à jour des modifications des pads
 
 L'application permet de suivre les modifications de pads.
 
