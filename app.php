@@ -190,8 +190,6 @@ class Archive
 
         touch(Config::getQueueLockFile());
 
-        shell_exec('cd '.Config::getPadsDir().' && git pull -r 2> /dev/null');
-
         foreach(glob(Config::getQueueDir().'/*.url') as $queueFile) {
             if(filemtime($queueFile) > time()) {
                 continue;
@@ -199,8 +197,6 @@ class Archive
             Archive::commit($queueFile);
             touch(Config::getQueueLockFile());
         }
-
-        shell_exec('cd '.Config::getPadsDir().' && git push 2> /dev/null');
 
         unlink(Config::getQueueLockFile());
     }
