@@ -277,7 +277,7 @@ class PadClient
         $pads = self::getAll();
         if($q) {
             foreach($pads as $k => $pad) {
-                if($q && strpos(strtolower($pad->title), strtolower($q)) === false) {
+                if($q && strpos(strtolower($pad->getTitle()), strtolower($q)) === false) {
                     unset($pads[$k]);
                 }
             }
@@ -334,6 +334,7 @@ class PadClient
         }
 
         self::$datesCommit = null;
+        $pads = [];
 
         foreach(array_keys(self::getDatesCommit()) as $id) {
             $pad = new Pad($id);
