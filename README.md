@@ -30,7 +30,7 @@ php -S localhost:8000
 
 ### Déploiement avec Apache
 
-Droits apache sur les dossiers `cache`, `queue` et `pads` :
+Configuration des droits apache sur les dossiers `cache`, `queue` et `pads` :
 
 ```
 sudo chown www-data:www-data cache queue pads
