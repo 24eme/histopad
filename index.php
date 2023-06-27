@@ -43,7 +43,7 @@ if(isset($_GET['id'])) {
             </div>
         <?php endif; ?>
 
-        <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Archiver un pad</button>
+        <button type="button" class="btn btn-outline-primary float-right" data-toggle="modal" data-target="#modalArchive">Ajouter un pad</button>
 
         <h2>Historique des pads <button type="button" class="btn btn-outline-dark btn-sm dropdown-toggle" data-toggle="modal" data-target="#modalClone">Git Clone</button></h2>
         <form method="GET" class="mt-3">
@@ -94,7 +94,7 @@ if(isset($_GET['id'])) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        Archiver un pad
+                        Ajouter un pad
                     </h5>
 
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
